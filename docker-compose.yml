@@ -1,0 +1,19 @@
+services:
+  app:
+    build: .
+    ports:
+      - 8080:8080
+    env_file: "./.env"
+    depends_on:
+      - rabbitmq
+      
+  rabbitmq:
+    env_file: "./.env"
+    image: rabbitmq:management
+    container_name: rabbitmq_box
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
