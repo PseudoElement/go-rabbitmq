@@ -20,7 +20,7 @@ func NewRabbitMQ() *RabbitMQ {
 	err := rmq.run()
 	failOnError(err, "RabbitMQ run error: ")
 
-	return &RabbitMQ{}
+	return rmq
 }
 
 func (this *RabbitMQ) run() error {
