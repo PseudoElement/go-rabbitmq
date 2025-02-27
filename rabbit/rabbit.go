@@ -16,7 +16,7 @@ type RabbitMQ struct {
 }
 
 func NewRabbitMQ() *RabbitMQ {
-	rmq := &RabbitMQ{}
+	rmq := &RabbitMQ{queues: make(map[string]amqp.Queue)}
 	err := rmq.run()
 	failOnError(err, "RabbitMQ run error: ")
 

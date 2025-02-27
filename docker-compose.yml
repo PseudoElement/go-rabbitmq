@@ -1,16 +1,30 @@
 services:
-  app:
-    build: .
+  sender:
+    container_name: sender_box
+    build: 
+      context: .
+      dockerfile: ./sender/Dockerfile
     ports:
       - 8080:8080
     env_file: "./.env"
     depends_on:
       - rabbitmq
+    
+  consumer:
+    container_name: consumer_box
+    build: 
+      context: .
+      dockerfile: ./consumer/Dockerfile
+    ports:
+      - 8081:8081
+    env_file: "./.env"
+    depends_on:
+      - rabbitmq
       
   rabbitmq:
+    container_name: rabbitmq_box
     env_file: "./.env"
     image: rabbitmq:management
-    container_name: rabbitmq_box
     ports:
       - 5672:5672
       - 15672:15672
