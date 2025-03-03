@@ -1,4 +1,4 @@
-module github.com/pseudoelement/go-rabbitmq/consumer
+module github.com/pseudoelement/go-rabbitmq/consumer-2
 
 go 1.22.3
 

@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/pseudoelement/go-rabbitmq/rabbit"
@@ -12,11 +14,25 @@ type Msg struct {
 	Text   string
 }
 
+func getConsumersNames() []string {
+	names := os.Getenv("CONSUMERS_NAMES")
+	if names == "" {
+		panic("env CONSUMERS_NAMES is empty")
+	}
+
+	splited := strings.Split(names, "___")
+
+	return splited
+}
+
 func main() {
-	time.Sleep(4 * time.Second)
+	time.Sleep(3 * time.Second)
 	rmq := rabbit.NewRabbitMQ()
 
-	rmq.CreateQueue("greeter")
+	consumerNames := getConsumersNames()
+	for _, name := range consumerNames {
+		rmq.CreateQueue(name)
+	}
 
 	for i := 0; ; i++ {
 		time.Sleep(2 * time.Second)
@@ -24,7 +40,9 @@ func main() {
 			Sender: "main.go",
 			Text:   fmt.Sprintf("%v Message from main service.", i),
 		}
-		rmq.Send("greeter", msg)
-
+		for _, name := range consumerNames {
+			rmq.Send(name, msg)
+			fmt.Println(i, " Msg sent.")
+		}
 	}
 }

@@ -20,6 +20,17 @@ services:
     env_file: "./.env"
     depends_on:
       - rabbitmq
+
+  consumer-2:
+    container_name: consumer_2_box
+    build: 
+      context: .
+      dockerfile: ./consumer-2/Dockerfile
+    ports:
+      - 8082:8082
+    env_file: "./.env"
+    depends_on:
+      - rabbitmq
       
   rabbitmq:
     container_name: rabbitmq_box

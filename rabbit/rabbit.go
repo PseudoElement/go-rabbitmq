@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -26,11 +25,9 @@ func NewRabbitMQ() *RabbitMQ {
 func (this *RabbitMQ) run() error {
 	conn, err := amqp.Dial(getRabbitMqUrl())
 	failOnError(err, "Failed to connect to RabbitMQ")
-	defer conn.Close()
 
 	ch, err := conn.Channel()
 	failOnError(err, "Failed to open a channel")
-	defer ch.Close()
 
 	this.ch = ch
 
@@ -84,7 +81,7 @@ func (this *RabbitMQ) Listen(queueName string, onMsg ReceiveHandler) error {
 
 	msgs, err := this.ch.Consume(
 		queue.Name, // queue
-		"",         // consumer
+		"consumer", // consumer
 		true,       // auto-ack
 		false,      // exclusive
 		false,      // no-local
@@ -95,7 +92,7 @@ func (this *RabbitMQ) Listen(queueName string, onMsg ReceiveHandler) error {
 
 	go func() {
 		for d := range msgs {
-			log.Printf("Received a message: %s", d.Body)
+			// log.Printf("Received a message: %s", d.Body)
 			if onMsg != nil {
 				err := onMsg(d.Body)
 				failOnError(err, "RabbitMQ listen error: ")
