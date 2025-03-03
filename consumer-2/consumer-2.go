@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"time"
 
 	"github.com/pseudoelement/go-rabbitmq/rabbit"
@@ -11,8 +12,18 @@ func main() {
 	time.Sleep(4 * time.Second)
 	rmq := rabbit.NewRabbitMQ()
 
-	rmq.CreateQueue("consumer-2")
-	rmq.Listen("consumer-2", func(msgBytes []byte) error {
+	queueName := "queue_2"
+	exchangeKind := os.Getenv("EXCHANGE_KIND")
+
+	rmq.CreateExchange(exchangeKind, "test-logs")
+	rmq.CreateQueue(queueName)
+	rmq.BindQueue(rabbit.RMQ_QueueParam{
+		QueueName:    queueName,
+		ExchangeKind: exchangeKind,
+		ExchangeName: "test-logs",
+	})
+
+	rmq.Listen(queueName, func(msgBytes []byte) error {
 		log.Printf("Consumer-2 received a message: %s", msgBytes)
 		return nil
 	},

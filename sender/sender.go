@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/pseudoelement/go-rabbitmq/rabbit"
@@ -14,35 +13,40 @@ type Msg struct {
 	Text   string
 }
 
-func getConsumersNames() []string {
-	names := os.Getenv("CONSUMERS_NAMES")
-	if names == "" {
-		panic("env CONSUMERS_NAMES is empty")
+func getQueueName() string {
+	name := os.Getenv("QUEUE_NAME")
+	if name == "" {
+		panic("env QUEUE_NAME is empty")
 	}
 
-	splited := strings.Split(names, "___")
-
-	return splited
+	return name
 }
 
 func main() {
 	time.Sleep(3 * time.Second)
 	rmq := rabbit.NewRabbitMQ()
 
-	consumerNames := getConsumersNames()
-	for _, name := range consumerNames {
-		rmq.CreateQueue(name)
-	}
+	exchangeKind := os.Getenv("EXCHANGE_KIND")
+
+	// exchange is MAIN entity to send/read messages - queueName in fanout mechanizme doesn't mattes
+	rmq.CreateExchange(exchangeKind, "test-logs")
+	queueName := getQueueName()
+	rmq.CreateQueue(queueName)
 
 	for i := 0; ; i++ {
 		time.Sleep(2 * time.Second)
-		msg := Msg{
-			Sender: "main.go",
-			Text:   fmt.Sprintf("%v Message from main service.", i),
-		}
-		for _, name := range consumerNames {
-			rmq.Send(name, msg)
-			fmt.Println(i, " Msg sent.")
-		}
+		err := rmq.Send(rabbit.RMQ_SendParam{
+			RMQ_QueueParam: rabbit.RMQ_QueueParam{
+				QueueName:    queueName,
+				ExchangeName: "test-logs",
+				ExchangeKind: exchangeKind,
+			},
+			Msg: Msg{
+				Sender: "main.go",
+				Text:   fmt.Sprintf("%v Message from main service.", i),
+			},
+		})
+		fmt.Println("Error ===> ", err)
+		fmt.Println(i, " Msg sent.")
 	}
 }
