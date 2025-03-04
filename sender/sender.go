@@ -31,19 +31,18 @@ func main() {
 	// exchange is MAIN entity to send/read messages - queueName in fanout mechanizme doesn't mattes
 	rmq.CreateExchange(exchangeKind, "test-logs")
 	queueName := getQueueName()
-	rmq.CreateQueue(queueName)
 
 	for i := 0; ; i++ {
 		time.Sleep(2 * time.Second)
-		err := rmq.Send(rabbit.RMQ_SendParam{
-			RMQ_QueueParam: rabbit.RMQ_QueueParam{
+		err := rmq.Send(rabbit.RMQ_SendParams{
+			RMQ_QueueParams: rabbit.RMQ_QueueParams{
 				QueueName:    queueName,
 				ExchangeName: "test-logs",
 				ExchangeKind: exchangeKind,
 			},
 			Msg: Msg{
 				Sender: "main.go",
-				Text:   fmt.Sprintf("%v Message from main service.", i),
+				Text:   fmt.Sprintf("%v Message from sender service.", i),
 			},
 		})
 		fmt.Println("Error ===> ", err)

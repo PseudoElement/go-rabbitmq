@@ -2,14 +2,14 @@ package rabbit
 
 type ReceiveHandler func(msg []byte) error
 
-type RMQ_QueueParam struct {
+type RMQ_QueueParams struct {
 	QueueName string
-	/* direct, fanout, topic, headers*/
+	/* direct, fanout, topic, headers */
 	ExchangeKind string
 	ExchangeName string
 }
 
-type RMQ_SendParam struct {
-	RMQ_QueueParam
+type RMQ_SendParams struct {
+	RMQ_QueueParams
 	Msg any
 }

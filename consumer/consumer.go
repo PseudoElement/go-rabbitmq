@@ -17,7 +17,7 @@ func main() {
 
 	rmq.CreateExchange(exchangeKind, "test-logs")
 	rmq.CreateQueue(queueName)
-	rmq.BindQueue(rabbit.RMQ_QueueParam{
+	rmq.BindQueue(rabbit.RMQ_QueueParams{
 		QueueName:    queueName,
 		ExchangeKind: exchangeKind,
 		ExchangeName: "test-logs",
