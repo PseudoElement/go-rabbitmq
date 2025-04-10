@@ -39,10 +39,11 @@ func main() {
 				QueueName:    queueName,
 				ExchangeName: "test-logs",
 				ExchangeKind: exchangeKind,
+				RoutingKey:   "payment.card.eur",
 			},
 			Msg: Msg{
 				Sender: "main.go",
-				Text:   fmt.Sprintf("%v Message from sender service.", i),
+				Text:   fmt.Sprintf("%v Payment in euro.", i),
 			},
 		})
 		fmt.Println("Error ===> ", err)

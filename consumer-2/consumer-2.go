@@ -21,6 +21,7 @@ func main() {
 		QueueName:    queueName,
 		ExchangeKind: exchangeKind,
 		ExchangeName: "test-logs",
+		RoutingKey:   "payment.card.eur",
 	})
 
 	rmq.Listen(queueName, func(msgBytes []byte) error {

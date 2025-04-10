@@ -52,8 +52,10 @@ func (this *RabbitMQ) BindQueue(p RMQ_QueueParams) error {
 	var routingKey string
 	if p.ExchangeKind == "fanout" {
 		routingKey = ""
-	} else {
+	} else if p.ExchangeKind == "direct" {
 		routingKey = p.QueueName
+	} else {
+		routingKey = p.RoutingKey
 	}
 
 	err := this.ch.QueueBind(
@@ -98,8 +100,10 @@ func (this *RabbitMQ) Send(p RMQ_SendParams) error {
 	var routingKey string
 	if p.ExchangeKind == "fanout" {
 		routingKey = ""
-	} else {
+	} else if p.ExchangeKind == "direct" {
 		routingKey = p.QueueName
+	} else {
+		routingKey = p.RoutingKey
 	}
 
 	err = this.ch.PublishWithContext(ctx,

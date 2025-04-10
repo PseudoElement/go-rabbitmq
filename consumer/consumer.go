@@ -8,6 +8,7 @@ import (
 	"github.com/pseudoelement/go-rabbitmq/rabbit"
 )
 
+// RabbitMQ `topic` exchange docs https://www.rabbitmq.com/tutorials/tutorial-five-go
 func main() {
 	time.Sleep(4 * time.Second)
 	rmq := rabbit.NewRabbitMQ()
@@ -21,6 +22,7 @@ func main() {
 		QueueName:    queueName,
 		ExchangeKind: exchangeKind,
 		ExchangeName: "test-logs",
+		RoutingKey:   "payment.card.*",
 	})
 
 	rmq.Listen(queueName, func(msgBytes []byte) error {

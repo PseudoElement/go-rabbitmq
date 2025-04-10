@@ -7,6 +7,8 @@ type RMQ_QueueParams struct {
 	/* direct, fanout, topic, headers */
 	ExchangeKind string
 	ExchangeName string
+	/* Required for `topic` exchanges */
+	RoutingKey string
 }
 
 type RMQ_SendParams struct {
